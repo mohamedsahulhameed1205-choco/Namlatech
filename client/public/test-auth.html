@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StayFinder Login Test</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #fff7ed;
+            padding: 40px;
+        }
+
+        .box {
+            background: white;
+            max-width: 400px;
+            margin: auto;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #f97316;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>StayFinder Registration</h2>
+
+    <input id="name" placeholder="Your Name">
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="registerUser()">Register</button>
+
+    <hr>
+
+    <h2>StayFinder Login</h2>
+
+    <input id="loginEmail" type="email" placeholder="Email">
+    <input id="loginPassword" type="password" placeholder="Password">
+
+    <button onclick="loginUser()">Login</button>
+
+    <pre id="result"></pre>
+
+</div>
+
+<script>
+
+const API = "http://localhost:5000/api/auth";
+
+async function registerUser() {
+
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+
+        const response = await fetch(API + "/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name,
+                email,
+                password
+            })
+        });
+
+        const data = await response.json();
+
+        document.getElementById("result").textContent =
+            JSON.stringify(data, null, 2);
+
+    } catch (error) {
+
+        document.getElementById("result").textContent =
+            "Unable to connect to server.";
+
+    }
+}
+
+async function loginUser() {
+
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    try {
+
+        const response = await fetch(API + "/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email,
+                password
+            })
+        });
+
+        const data = await response.json();
+
+        document.getElementById("result").textContent =
+            JSON.stringify(data, null, 2);
+
+        if (data.token) {
+            localStorage.setItem("stayfinderToken", data.token);
+        }
+
+    } catch (error) {
+
+        document.getElementById("result").textContent =
+            "Unable to connect to server.";
+
+    }
+}
+
+</script>
+
+</body>
+</html>
